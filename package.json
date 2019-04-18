@@ -1,0 +1,32 @@
+{
+  "name": "mongo-scraper",
+  "version": "1.0.0",
+  "description": "mongo-scraper dependencies",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaibili01/Mongo-Scraper.git"
+  },
+  "keywords": [
+    "mongo-scraper"
+  ],
+  "author": "adanimal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaibili01/Mongo-Scraper/issues"
+  },
+  "homepage": "https://github.com/kaibili01/Mongo-Scraper#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.3",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "mongoose": "^5.5.2",
+    "request": "^2.88.0"
+  }
+}
