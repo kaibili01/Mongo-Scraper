@@ -66,24 +66,24 @@ app.get("/saved",function(req,res){
     })
 })
 app.get("/scrape",function(req,res){
-    request.get("https://nypost.com/",function(err,response,body){
+    request.get("https://datebook.sfchronicle.com/art-exhibits/a-suzanne-lacy-exhibition-so-formidable-it-took-two-museums",function(err,response,body){
         if(err){
             console.log(err);
         }
         else{
             //res.send(body);
             var $=cheerio.load(body);
-            $(".top-story").each(function(i,element){
+            $("li").each(function(i,element){
                 var result={};
-                result.link=$(this)
+                result.link="https://www.sfchronicle.com/" + $(this)
                     .children("a")
                     .attr("href");
                 result.title=$(this)
-                    .find(".headline")
+                    .find(".title")
                     .text();
-                result.summary=$(this)
-                    .find(".display-tag")
-                    .text();
+                // result.summary=$(this)
+                    // .find(".display-tag")
+                    // .text();
                 result.saved=false;
                 db.Article.create(result)
                     .then(function(dbArticle){

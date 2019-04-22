@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 card-columns">
+            {{#if data.length}}
+                {{#each data}}
+                    <div class="card">
+                        <div class="card-body">
+                            <a class="card-title" href="{{this.link}}">{{this.title}}</a>
+                            <h6 class="card-text">{{this.summary}}</h6>
+                            <ul class="list-group list-group-flush">
+                                {{#if this.comments.length}}
+                                    {{#each this.comments}}
+                                        <li class="list-group-item">{{this.title}}<button class="btn btn-primary delete-comment"data-id="{{this._id}}">Delete</button></li>
+                                    {{/each}}
+                                {{/if}}
+                            </ul>
+                            <button class="btn btn-primary save"data-id="{{this._id}}">Save</button>
+                        </div>
+                    </div>
+                {{/each}}
+            {{else}}
+                
+            {{/if}}
+            
+        </div>
+    </div>
