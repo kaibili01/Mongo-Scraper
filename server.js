@@ -30,7 +30,7 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Mongo-Scraper"
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI, { useNewUrlParser: true});
+mongoose.connect(MONGODB_URI, {useNewUrlParser: true});
 //express routes
 app.get("/",function(req,res){
     db.Article.find({})
@@ -66,7 +66,7 @@ app.get("/saved",function(req,res){
     })
 })
 app.get("/scrape",function(req,res){
-    request.get("https://datebook.sfchronicle.com/art-exhibits/a-suzanne-lacy-exhibition-so-formidable-it-took-two-museums",function(err,response,body){
+    request.get("https://datebook.sfchronicle.com/category/art-exhibits",function(err,response,body){
         if(err){
             console.log(err);
         }
@@ -75,15 +75,15 @@ app.get("/scrape",function(req,res){
             var $=cheerio.load(body);
             $("li").each(function(i,element){
                 var result={};
-                result.link="https://www.sfchronicle.com/" + $(this)
+                result.link=$(this)
                     .children("a")
                     .attr("href");
                 result.title=$(this)
                     .find(".title")
                     .text();
-                // result.summary=$(this)
-                    // .find(".display-tag")
-                    // .text();
+                result.summary=$(this)
+                    .find(".display-tag")
+                    .text();
                 result.saved=false;
                 db.Article.create(result)
                     .then(function(dbArticle){
