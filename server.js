@@ -99,7 +99,7 @@ app.get("/scrape",function(req,res){
     })
 })
 app.get("/clear",function(req,res){
-    db.Article.deleteMany({saved:false},function(err){
+    db.Article.deleteMany({},function(err){
         if(err){
             console.log(err);
         }
