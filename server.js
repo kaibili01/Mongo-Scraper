@@ -75,7 +75,7 @@ app.get("/scrape",function(req,res){
             var $=cheerio.load(body);
             $("li").each(function(i,element){
                 var result={};
-                result.link=$(this)
+                result.link= $(this)
                     .children("a")
                     .attr("href");
                 result.title=$(this)
