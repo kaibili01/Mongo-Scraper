@@ -1,6 +1,9 @@
 // dependencies
 
 var express = require("express");
+var app = express();  // define app once here
+
+app.use(express.static("public"));  // serve static assets from public folder
 
 var mongoose = require("mongoose");
 const { create } = require("express-handlebars");
@@ -10,8 +13,6 @@ var cheerio = require("cheerio");
 var request = require("request");
 var db = require("./models");
 var PORT = process.env.PORT || 3000;
-
-var app = express(); // ✅ Define app before using it
 
 // Set up Handlebars
 const hbs = create({
