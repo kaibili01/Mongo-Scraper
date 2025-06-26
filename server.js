@@ -39,37 +39,42 @@ mongoose.connect(MONGODB_URI, {
 //express routes
 app.get("/",function(req,res){
     db.Article.find({})
-    .populate("comments")
-    .then(function(dbArticle){
-        res.render("home",{data:dbArticle});
-    })
+  .populate("comments")
+  .then(function(dbArticle) {
+    // Convert each Mongoose doc to plain JS object
+    const articles = dbArticle.map(article => article.toObject());
+    res.render("home", { data: articles });
+  })
     .catch(function(err){
         console.log(err);
         res.json(err);
     })
 })
-app.get("/home",function(req,res){
-    db.Article.find({})
+app.get("/home", function(req, res) {
+  db.Article.find({})
     .populate("comments")
-    .then(function(dbArticle){
-        res.render("home",{data:dbArticle});
+    .then(function(dbArticle) {
+      const articles = dbArticle.map(article => article.toObject());
+      res.render("home", { data: articles });
     })
-    .catch(function(err){
-        console.log(err);
-        res.json(err);
-    })
-})
-app.get("/saved",function(req,res){
-    db.Article.find({saved:true})
+    .catch(function(err) {
+      console.log(err);
+      res.json(err);
+    });
+});
+
+app.get("/saved", function(req, res) {
+  db.Article.find({ saved: true })
     .populate("comments")
-    .then(function(dbArticle){
-        res.render("saved",{data:dbArticle});
+    .then(function(dbArticle) {
+      const articles = dbArticle.map(article => article.toObject());
+      res.render("saved", { data: articles });
     })
-    .catch(function(err){
-        console.log(err);
-        res.json(err);
-    })
-})
+    .catch(function(err) {
+      console.log(err);
+      res.json(err);
+    });
+});
 app.get("/scrape", function(req, res) {
   request.get("https://datebook.sfchronicle.com/category/art-exhibits", function(err, response, body) {
     if (err) {
