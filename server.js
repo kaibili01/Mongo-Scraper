@@ -70,39 +70,49 @@ app.get("/saved",function(req,res){
         res.json(err);
     })
 })
-app.get("/scrape",function(req,res){
-    request.get("https://datebook.sfchronicle.com/category/art-exhibits",function(err,response,body){
-        if(err){
-            console.log(err);
-        }
-        else{
-            //res.send(body);
-            var $=cheerio.load(body);
-            $("li").each(function(i,element){
-                var result={};
-                result.link= $(this)
-                    .children("a")
-                    .attr("href");
-                result.title=$(this)
-                    .find(".title")
-                    .text();
-                result.summary=$(this)
-                    .find(".display-tag")
-                    .text();
-                result.saved=false;
-                db.Article.create(result)
-                    .then(function(dbArticle){
-                        console.log(dbArticle);
-                    })
-                    .catch(function(err){
-                    
-                        
-                    });
-            })
-        }
+app.get("/scrape", function(req, res) {
+  request.get("https://datebook.sfchronicle.com/category/art-exhibits", function(err, response, body) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Scrape failed");
+    }
+
+    var $ = cheerio.load(body);
+    var articlePromises = [];
+
+    $("li").each(function(i, element) {
+      var result = {};
+      result.link = $(this).children("a").attr("href");
+      result.title = $(this).find(".title").text().trim();
+      result.summary = $(this).find(".display-tag").text().trim();
+      result.saved = false;
+
+      // Only save if title and link exist (avoid empty entries)
+      if (result.title && result.link) {
+        // Push the promise from db.Article.create() into array
+        articlePromises.push(
+          db.Article.create(result).then(dbArticle => {
+            console.log("Saved article:", dbArticle.title);
+            return dbArticle;
+          }).catch(err => {
+            console.error("Error saving article:", err);
+          })
+        );
+      }
+    });
+
+    // Wait for all articles to be saved before redirecting
+    Promise.all(articlePromises)
+      .then(() => {
+        console.log(`Scraped and saved ${articlePromises.length} articles.`);
         res.redirect("/home");
-    })
-})
+      })
+      .catch(err => {
+        console.error("Error in saving articles:", err);
+        res.status(500).send("Error saving scraped articles");
+      });
+  });
+});
 app.get("/clear",function(req,res){
     db.Article.deleteMany({},function(err){
         if(err){
