@@ -1,26 +1,27 @@
 // dependencies
 
-var express=require("express");
-var bodyParser=require("body-parser");
-var mongoose=require("mongoose");
-var exphbs=require("express-handlebars");
-var axios = require("axios");
-var cheerio=require("cheerio");
-var request=require("request");
+var express = require("express");
 
-var db=require("./models");
-var PORT= process.env.PORT || 3000;
-var app=express();
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static("public"));
-app.engine(
-    "handlebars",
-    exphbs({
-      defaultLayout: "main",
-      extname: ".handlebars"
-    })
-  );
-  app.set("view engine", "handlebars");
+var mongoose = require("mongoose");
+const { create } = require("express-handlebars");
+
+var axios = require("axios");
+var cheerio = require("cheerio");
+var request = require("request");
+var db = require("./models");
+var PORT = process.env.PORT || 3000;
+
+var app = express(); // ✅ Define app before using it
+
+// Set up Handlebars
+const hbs = create({
+  defaultLayout: "main",
+  extname: ".handlebars"
+});
+app.use(express.urlencoded({ extended: false }));
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
+
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Mongo-Scraper";
 
@@ -30,7 +31,10 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Mongo-Scraper"
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
 mongoose.Promise = Promise;
-mongoose.connect(MONGODB_URI, {useNewUrlParser: true});
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
 //express routes
 app.get("/",function(req,res){
     db.Article.find({})
